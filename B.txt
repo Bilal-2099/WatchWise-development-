@@ -1,0 +1,554 @@
+Given everything I know about your background, I'd actually **avoid** making an AI project where the AI is the main feature.
+
+Why?
+
+Your goal is to get hired as a **backend engineer**, not an ML engineer.
+
+You want recruiters to look at your GitHub and think:
+
+> "This person can design APIs, databases, authentication, background jobs, caching, deployment, and integrations."
+
+The AI part should be a feature, not the product.
+
+## Your YouTube idea
+
+> Recommend YouTube videos based on AI summaries of previously watched videos.
+
+I actually like this idea.
+
+But I'd expand it into a backend-heavy project.
+
+### Features
+
+* Google OAuth login
+* Import YouTube watch history
+* Background worker fetches video metadata
+* Generate summaries using an LLM
+* Store embeddings (optional)
+* Recommend similar videos
+* Search previous summaries
+* Save favorites
+* REST API
+* Admin dashboard
+* Docker
+* PostgreSQL
+* Redis
+
+This project demonstrates:
+
+* Authentication
+* Background jobs
+* External APIs
+* AI integration
+* Database design
+* Caching
+* Async programming
+
+The AI becomes about 20% of the project.
+
+---
+
+## Movie/Series Recommendation
+
+This is also good.
+
+You could integrate:
+
+* TMDB API
+* OMDb API
+
+Users could:
+
+* Track watched movies
+* Rate them
+* AI summarizes preferences
+* Recommend movies
+* Generate "What should I watch tonight?"
+
+Again:
+
+Backend first.
+AI second.
+
+---
+
+# Other ideas I'd recommend
+
+## 1. Personal Knowledge Base (My favorite)
+
+Think of it as "Notion + AI."
+
+Users can:
+
+* Upload PDFs
+* Upload Markdown
+* Upload Notes
+* Upload URLs
+
+Backend:
+
+* Authentication
+* File uploads
+* Background indexing
+* Search
+* AI chat over documents
+* Redis
+* PostgreSQL
+
+This is an excellent portfolio project.
+
+---
+
+## 2. Job Tracker
+
+Perfect for you because you're applying yourself.
+
+Features:
+
+* Save job applications
+* Company database
+* Interview notes
+* Resume versions
+* AI interview questions
+* Application analytics
+* Email reminders
+
+Lots of CRUD, authentication, filtering, scheduling.
+
+---
+
+## 3. Event Management Platform
+
+Users
+
+Admins
+
+Events
+
+Tickets
+
+QR Codes
+
+Payments (mock)
+
+Notifications
+
+Emails
+
+Background jobs
+
+Excellent backend project.
+
+---
+
+## 4. Learning Tracker
+
+Since you're constantly learning.
+
+Track:
+
+* Courses
+* GitHub projects
+* LeetCode
+* Books
+* Videos
+* Certifications
+
+Dashboard
+
+Charts
+
+AI weekly summary
+
+---
+
+## 5. Expense Tracker
+
+Not exciting.
+
+But recruiters love it because it has:
+
+* Authentication
+* Transactions
+* Categories
+* Analytics
+* CSV export
+* Scheduled reports
+
+---
+
+# If I were building one "resume killer"
+
+I'd build:
+
+```text
+LearnTube
+```
+
+Users:
+
+↓
+
+Login with Google
+
+↓
+
+Import YouTube history
+
+↓
+
+Background worker fetches metadata
+
+↓
+
+Generate AI summaries
+
+↓
+
+Store summaries
+
+↓
+
+Recommend videos
+
+↓
+
+Search videos semantically
+
+↓
+
+Dashboard
+
+↓
+
+Bookmarks
+
+↓
+
+Reading list
+
+↓
+
+REST API
+
+↓
+
+Docker
+
+↓
+
+Redis
+
+↓
+
+PostgreSQL
+
+↓
+
+FastAPI
+
+↓
+
+Deploy
+
+That project alone touches almost every backend concept a junior backend engineer is expected to know.
+
+---
+
+## My recommendation for you
+
+Based on the projects you've already completed (Django REST APIs, chat app with Channels and Redis, and now FastAPI), I'd spend the next few months building **one substantial backend application** instead of several small ones.
+
+A strong project should include:
+
+* FastAPI
+* PostgreSQL
+* SQLAlchemy
+* Alembic
+* JWT authentication
+* Redis
+* Background tasks
+* File uploads
+* Docker
+* Unit/integration tests
+* Deployment
+* One external API integration
+* One AI-powered feature (summarization or recommendations)
+
+That combination demonstrates the backend engineering skills most junior Python/FastAPI roles are looking for, while the AI component shows you can integrate modern services without making the project entirely dependent on them.
+
+I actually think the Movie & Series project is the better choice.
+
+The YouTube idea has several practical challenges:
+
+* Large watch histories.
+* Quota limits on the YouTube Data API.
+* Privacy considerations.
+* Long processing times.
+* More expensive AI usage if you summarize many videos.
+
+A movie and TV recommendation platform lets you demonstrate backend engineering without those complications.
+
+## Here's the project I'd build
+
+**Name ideas**
+
+* CineMind
+* WatchWise
+* ReelMatch
+* CineCompass
+* FrameFinder
+
+---
+
+# MVP (Version 1)
+
+### Authentication
+
+* Register
+* Login
+* JWT Authentication
+* Refresh Tokens
+
+### User Profile
+
+* Username
+* Bio
+* Favorite genres
+
+### Movies
+
+Import metadata from TMDb (don't build your own movie database).
+
+Store:
+
+* Title
+* Poster
+* Genres
+* Runtime
+* Cast
+* Overview
+* Release year
+
+### Watchlist
+
+Users can:
+
+* Add movie
+* Remove movie
+* Mark watched
+
+### Ratings
+
+1–10 stars
+
+### Reviews
+
+Simple text review
+
+---
+
+# Version 2
+
+Recommendation Engine
+
+Instead of AI first, create rules.
+
+Example:
+
+If user likes
+
+* Sci-Fi
+* Thriller
+* Nolan
+
+Recommend
+
+* Interstellar
+* Tenet
+* Inception
+
+This teaches recommendation logic.
+
+---
+
+# Version 3
+
+Now add AI.
+
+Prompt example:
+
+> Here are the movies the user watched and rated highly. Explain what kind of movies they enjoy and recommend five new movies.
+
+Now AI is a feature.
+
+---
+
+# Version 4
+
+Background Jobs
+
+Redis + Celery
+
+Tasks:
+
+* Fetch movie details
+* Refresh ratings
+* Generate recommendations
+* Send weekly email
+
+Now you're showing backend architecture.
+
+---
+
+# Version 5
+
+Search
+
+* Search title
+* Genre
+* Actor
+* Director
+
+Pagination
+
+Sorting
+
+Filtering
+
+---
+
+# Version 6
+
+Social Features
+
+Follow users
+
+Like reviews
+
+Public profiles
+
+Trending movies
+
+---
+
+# Database
+
+```text
+User
+Movie
+TVSeries
+Genre
+Review
+Rating
+Watchlist
+Recommendation
+```
+
+This is excellent practice for relational modeling.
+
+---
+
+# APIs
+
+```
+POST /auth/register
+
+POST /auth/login
+
+GET /movies
+
+GET /movies/{id}
+
+POST /watchlist
+
+DELETE /watchlist/{id}
+
+POST /ratings
+
+POST /reviews
+
+GET /recommendations
+
+GET /profile
+```
+
+---
+
+# Tech Stack
+
+FastAPI
+
+PostgreSQL
+
+SQLAlchemy
+
+Alembic
+
+Redis
+
+Celery
+
+JWT
+
+Docker
+
+GitHub Actions
+
+Pytest
+
+TMDb API
+
+OpenAI API (optional)
+
+---
+
+## Why I like this project for you
+
+Your internship has already given you experience with:
+
+* Django REST APIs
+* CRUD
+* JWT authentication
+* Testing
+* Django Channels
+* Redis
+* FastAPI basics
+
+This project naturally builds on that experience while introducing technologies that many backend roles expect.
+
+It also gives you opportunities to discuss API design, database modeling, background processing, authentication, and integration with third-party services during interviews.
+
+## One suggestion that could make it stand out
+
+Don't call it "Movie Recommendation System."
+
+Build it as a **personal entertainment tracker**.
+
+Imagine using apps like Letterboxd or MyAnimeList as inspiration, but with your own focus.
+
+Features like:
+
+* "Continue Watching"
+* "Watched This Year"
+* "Top Rated Movies"
+* "Hidden Gems"
+* "Weekend Picks"
+* "Because You Liked *The Dark Knight*"
+
+make it feel like a real product instead of a college project.
+
+I also suggest planning it in milestones rather than trying to build everything at once:
+
+1. **Core backend:** Authentication, movies, watchlist, ratings, reviews.
+2. **Production features:** Pagination, filtering, search, Docker, tests, deployment.
+3. **Advanced backend:** Redis, background jobs, recommendation generation.
+4. **AI enhancements:** Personalized explanations and recommendations based on the user's viewing history.
+
+That approach lets you have a deployable, interview-ready project early, while continuing to add advanced features over time.
+
+
+We are building **CineCompass** (or **ReelMatch**), an industry-grade, personal entertainment tracker and streaming aggregator API using **FastAPI**, **PostgreSQL (SQLAlchemy 2.0)**, and **Redis**. Rather than bloating our database by replicating a massive film catalog, we are implementing a lean hybrid architecture: our PostgreSQL database will strictly manage user accounts and actions across four core tables (**Users, Watchlists, Ratings, and Reviews**), while all real-time movie data, deep search capabilities, and dynamic "Where to Watch" streaming links will be fetched on the fly from the **TMDB API**. We will develop this system in distinct, production-ready milestones—scaffolding the core relational database models and secure JWT authentication first, transitioning into query proxy endpoints, and ultimately scaling the application by introducing **Celery background workers** for advanced recommendation logic and offline tasks.
+
+Phase 2 Design: The AI "CineProfile" Feature
+We are refining the application’s AI feature by designing a dedicated GET /users/me/ai-persona endpoint that generates a sharp, witty, 3-to-4 sentence cinematic character summary based on the user's taste. Rather than wasting budget and slowing down performance by passing the user's entire watch history to the LLM, we are implementing an optimized filtering strategy: our PostgreSQL query will isolate only the user's top 5 to 10 highest-rated movies using a simple descending sort and limit constraint. This high "signal-to-noise" data bundle will be processed via a tight system prompt using a cost-efficient model (like gpt-4o-mini), resulting in an ultra-fast, budget-friendly feature that can be displayed proudly at the top of their user profile.
