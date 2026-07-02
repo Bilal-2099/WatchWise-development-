@@ -1,10 +1,9 @@
 from tmdbv3api import TMDb, Movie, TV
-from app.config import tmdb_api
+from app.config import tmdb_api, base_image_url
 
 tmdb = TMDb()
 tmdb.api_key = tmdb_api
 tmdb.language = 'en' 
-base_image_url = "https://image.tmdb.org/t/p/w500"
 movie_api = Movie()
 show_api = TV()
 
@@ -34,7 +33,7 @@ def search_show(query, limit=10):
     if not query.strip():
         return {"results": []}
 
-    search_results = show.search(query)
+    search_results = show_api.search(query)
     results = list(search_results)[:limit]
 
     return {
@@ -65,7 +64,6 @@ def get_movie(id):
         }
    }
 
-
 def get_show(id):
     show_detail = show_api.details(id)
 
@@ -75,8 +73,43 @@ def get_show(id):
             "title": show_detail.name,
             "rating": show_detail.vote_average if show_detail.vote_average else None,
             "description": show_detail.overview,
-            "release_date": show_detail.release_date,
+            "first_air_date": show_detail.first_air_date,
             "poster": base_image_url + show_detail.poster_path if show_detail.poster_path else None,
             "backdrop_pic": base_image_url + show_detail.backdrop_path if show_detail.backdrop_path else None
         }
    }
+
+# Recommendations Movies
+def get_recs_movies(movie_id, limit=20, ):
+    recs_movies = movie_api.recommendations(movie_id)
+
+    recs_movies = list(recs_movies["results"])[:limit]
+
+    return {
+        "results": [
+        {
+            "id": m["id"],
+            "title": m["title"],
+            "rating": m["vote_average"],
+            "poster": base_image_url + m["poster_path"] if m["poster_path"] else None,
+        }
+        for m in recs_movies
+    ]
+    }
+
+def get_rec_shows(show_id,limit=20):
+    recs_shows = show_api.recommendations(show_id)
+
+    recs_shows = list(recs_shows["results"])[:limit]
+
+    return {
+        "results": [
+        {
+            "id": s["id"],
+            "title": s["name"],
+            "rating": s["vote_average"],
+            "poster": base_image_url + s["poster_path"] if s["poster_path"] else None,
+        }
+        for s in recs_shows
+    ]
+    }

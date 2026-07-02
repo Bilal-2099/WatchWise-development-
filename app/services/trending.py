@@ -1,14 +1,13 @@
 from tmdbv3api import Trending, TMDb, Movie, TV
-from app.config import tmdb_api
+from app.config import tmdb_api, base_image_url
 
 tmdb = TMDb()
 tmdb.api_key = tmdb_api
 tmdb.language = 'en' 
-base_image_url = "https://image.tmdb.org/t/p/w500"
 
 trending = Trending()
 movie = Movie()
-show = TV()
+show_api = TV()
 
 # Get trending movies
 def get_trending_movie(limit=20):
@@ -19,15 +18,14 @@ def get_trending_movie(limit=20):
     return {
         "results": [
         {
-            "id": movie["id"],
-            "title": movie["title"],
-            "raing": movie["vote_average"],
-            "poster": base_image_url + movie["poster_path"] if movie["poster_path"] else None,
+            "id": m["id"],
+            "title": m["title"],
+            "rating": m["vote_average"],
+            "poster": base_image_url + m["poster_path"] if m["poster_path"] else None,
         }
-        for movie in movies
+        for m in movies
     ]
     }
-
 
 # Get trending shows
 def get_trending_show(limit=20):
@@ -38,12 +36,12 @@ def get_trending_show(limit=20):
     return {
         "results": [
         {
-            "id": show["id"],
-            "title": show["name"],
-            "description": show["overview"],
-            "poster": base_image_url + show["poster_path"] if show["poster_path"] else None,
+            "id": s["id"],
+            "title": s["name"],
+            "rating": s["vote_average"],
+            "poster": base_image_url + s["poster_path"] if s["poster_path"] else None,
         }
-        for show in shows
+        for s in shows
     ]
     }
 
@@ -56,29 +54,65 @@ def popular_movies(limit=20):
     return {
         "results": [
         {
-            "id": movie["id"],
-            "title": movie["title"],
-            "raing": movie["vote_average"],
-            "poster": base_image_url + movie["poster_path"] if movie["poster_path"] else None,
+            "id": m["id"],
+            "title": m["title"],
+            "rating": m["vote_average"],
+            "poster": base_image_url + m["poster_path"] if m["poster_path"] else None,
         }
-        for movie in popular_movies
+        for m in popular_movies
     ]
     }
 
 # Get popular shows
 def popular_shows(limit=20):
-    popular_shows = show.popular()
+    popular_shows = show_api.popular()
 
     popular_shows = list(popular_shows["results"])[:limit]
 
     return {
         "results": [
         {
-            "id": show["id"],
-            "title": show["name"],
-            "description": show["overview"],
-            "poster": base_image_url + show["poster_path"] if show["poster_path"] else None,
+            "id": s["id"],
+            "title": s["name"],
+            "rating": s["vote_average"],
+            "poster": base_image_url + s["poster_path"] if s["poster_path"] else None,
         }
-        for show in popular_shows
+        for s in popular_shows
+    ]
+    }
+
+# Get top rated movies
+def top_rated_movies(limit=20):
+    top_rated_movies = movie.top_rated()
+
+    top_rated_movies = list(top_rated_movies["results"])[:limit]
+
+    return {
+        "results": [
+        {
+            "id": m["id"],
+            "title": m["title"],
+            "rating": m["vote_average"],
+            "poster": base_image_url + m["poster_path"] if m["poster_path"] else None,
+        }
+        for m in top_rated_movies
+    ]
+    }
+
+# Get top rated shows
+def top_rated_shows(limit=20):
+    top_rated_shows = show_api.top_rated()
+
+    top_rated_shows = list(top_rated_shows["results"])[:limit]
+
+    return {
+        "results": [
+        {
+            "id": s["id"],
+            "title": s["name"],
+            "rating": s["vote_average"],
+            "poster": base_image_url + s["poster_path"] if s["poster_path"] else None,
+        }
+        for s in top_rated_shows
     ]
     }
