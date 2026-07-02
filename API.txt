@@ -1,0 +1,29 @@
+movie_api/
+│
+├── app/
+│   ├── main.py
+│   │
+│   ├── config.py __save api_keys in as variable then use on others
+│   │
+│   ├── routers/ __define your api endpoints
+│   │   ├── trending.py 
+│   │   ├── search.py
+│   │   ├── movies.py
+│   │   └── tv.py
+│   │
+│   ├── services/ __logic code will be here
+│   │   ├── trending_service.py
+│   │   ├── search_service.py
+│   │   ├── movie_service.py
+│   │   └── tv_service.py
+│   │
+│   ├── schemas/
+│   │   ├── movie.py
+│   │   └── tv.py
+│   │
+│   └── utils/ __utility functions
+│       └── image.py
+│
+├── .env
+├── requirements.txt
+└── README.md

@@ -1,24 +1,24 @@
-# from tmdbv3api import TMDb, Movie
-
-
-
-# # Use the Movie object to search
-# movie = Movie()
-# search_results = movie.search('Avenger')
-
-# # print(search_results)
-# for result in search_results:
-#     print(result.title)
 
 from tmdbv3api import TMDb, Movie, TV, Person, Discover
+from dotenv import load_dotenv
+import os
 
+load_dotenv()
 
-# movie = Movie()
+tmdb_api = os.getenv('API_Key')
+tmdb = TMDb()
+tmdb.api_key = tmdb_api
+tmdb.language = 'en' 
+base_image_url = "https://image.tmdb.org/t/p/w500"
+
+movie = Movie()
 
 # # --- Get Popular or Top Rated Movies ---
-# popular_movies = movie.popular()
-# for m in popular_movies: # Just printing the top 5
-#     print(f"{m.title} (Rating: {m.vote_average})")
+popular_movies = movie.popular()
+popular_movies = list(popular_movies["results"])
+
+for m in popular_movies[:10]: # Just printing the top 5
+    print(f"{m.title} (Rating: {m.vote_average})")
 
 # # --- Get Specific Details by TMDB ID ---
 # # Let's look up Interstellar (ID: 157336)
@@ -52,9 +52,9 @@ from tmdbv3api import TMDb, Movie, TV, Person, Discover
 # for d in best_dramas:
 #     print(d.title)
 
-movie = Movie()
-detail = movie.details(157336)
+# movie = Movie()
+# detail = movie.details(157336)
 
-base_image_url = "https://image.tmdb.org/t/p/w500"
-full_poster_url = base_image_url + detail.poster_path
-print(full_poster_url)
+# base_image_url = "https://image.tmdb.org/t/p/w500"
+# full_poster_url = base_image_url + detail.poster_path
+# print(full_poster_url)
