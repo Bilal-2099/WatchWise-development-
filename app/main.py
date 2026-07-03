@@ -1,10 +1,25 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, Depends
 from app.services.trending import *
 from app.services.search import *
 from app.services.genres import *
 
+from sqlmodel import Session
+from app.database import *
+from app.models import *
+
 app = FastAPI()
 
+@app.on_event("startup")
+def on_startup():
+    init_db()
+
+@app.post("/diary/log")
+def log_media(entry: DiaryEntry, db: Session = Depends(get_session)):
+    db.add(entry)
+    db.commit()
+    db.refresh(entry)
+    return {"status": "success", "data": entry}
+    
 # Trending APIs
 @app.get("/trending/movies/{limit}")
 async def trend_movies(limit: int):
