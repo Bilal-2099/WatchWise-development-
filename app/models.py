@@ -5,18 +5,18 @@ from sqlmodel import Field, SQLModel
 # User
 class User(SQLModel, table=True):
     id: Optional[int] = Field(default=None, primary_key=True)
-    username: str = Field(index=True, unique=True)
-    email: str = Field(index=True, unique=True)
-    profile_photo: Optional[str] = Field(default=None)
+    username: str = Field(index=True, unique=True) # Should be unique
+    email: str = Field(index=True, unique=True) # Should be unique
+    profile_photo: Optional[str] = Field(default=None) # It is optional cause I am still thinking about it
     created_at: datetime = Field(default_factory=datetime.utcnow)
 
 # Watchlist
 class Watchlist(SQLModel, table=True):
     id: Optional[int] = Field(default=None, primary_key=True)
-    user_id: int = Field(foreign_key="user.id", index=True)
-    tmdb_id: int
+    user_id: int = Field(foreign_key="user.id", index=True) # Foreign key from User class
+    tmdb_id: int # We will get this from TMDB
     media_type: str # "movie" or "tv"
-    added_at: datetime = Field(default_factory=datetime.utcnow)
+    added_at: datetime = Field(default_factory=datetime.utcnow) # Just to when user added 
 
 # Dairy/Review
 class DiaryEntry(SQLModel, table=True):
