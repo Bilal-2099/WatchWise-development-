@@ -10,10 +10,30 @@ genre_api = Genre()
 
 # Get Genre
 def get_movie_genres():
-    return genre_api.movie_list()
+    result = genre_api.movie_list()
+    
+    return {
+        "genres": [
+            {
+                "id": genre.id,
+                "name": genre.name,
+            }
+            for genre in result.genres
+        ]
+    }
 
 def get_show_genres():
-    return genre_api.tv_list()
+    result = genre_api.tv_list()
+
+    return {
+        "genres": [
+            {
+                "id": genre.id,
+                "name": genre.name,
+            }
+            for genre in result.genres
+        ]
+    }
 
 # Get Movies by Genre ID
 def get_movies_by_genre(genre_id, limit=20):

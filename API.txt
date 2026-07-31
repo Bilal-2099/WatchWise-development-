@@ -27,3 +27,5 @@ Tube/
 ├── .env
 ├── requirements.txt
 └── README.md
+
+py -m uvicorn app.main:app --reload

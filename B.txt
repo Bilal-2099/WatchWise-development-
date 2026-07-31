@@ -1,26 +1,15 @@
-Given everything I know about your background, I'd actually **avoid** making an AI project where the AI is the main feature.
-
-Why?
-
-Your goal is to get hired as a **backend engineer**, not an ML engineer.
-
 You want recruiters to look at your GitHub and think:
-
-> "This person can design APIs, databases, authentication, background jobs, caching, deployment, and integrations."
+    > "This person can design APIs, databases, authentication, background jobs, caching, deployment, and integrations."
 
 The AI part should be a feature, not the product.
-
 ## Movie/Series Recommendation
 
 This is also good.
 
 You could integrate:
-
 * TMDB API
-* OMDb API
 
 Users could:
-
 * Track watched movies
 * Rate them
 * AI summarizes preferences
@@ -34,14 +23,6 @@ AI second.
 
 ---
 I actually think the Movie & Series project is the better choice.
-
-The YouTube idea has several practical challenges:
-
-* Large watch histories.
-* Quota limits on the YouTube Data API.
-* Privacy considerations.
-* Long processing times.
-* More expensive AI usage if you summarize many videos.
 
 A movie and TV recommendation platform lets you demonstrate backend engineering without those complications.
 

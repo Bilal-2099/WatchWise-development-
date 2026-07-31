@@ -17,7 +17,9 @@ discover = Discover()
 genre_api = Genre()
 
 def get_movie_genres():
-    # Returns a list of genres like [{"id": 28, "name": "Action"}, ...]
-    return genre_api.movie_list()
+    result =  genre_api.movie_list()
+    return type(result)
+    
 
+    # Returns a list of genres like [{"id": 28, "name": "Action"}, ...]
 print(get_movie_genres())

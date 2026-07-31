@@ -76,11 +76,11 @@ async def get_recommendation_shows(show_id: int, limit: int):
 
 # List Genre APIs
 @app.get("/genres/movies/")
-async def get_movie_genres():
+async def get_movie_genres_list():
     return get_movie_genres()
 
 @app.get("/genres/shows/")
-async def get_show_genres():
+async def get_show_genres_list():
     return get_show_genres()
 
 # Get Movies By Genre
