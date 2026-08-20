@@ -10,7 +10,7 @@ movie = Movie()
 show_api = TV()
 
 # Get trending movies
-def get_trending_movie(limit=20):
+def get_trending_movie(limit=10):
     trending_movies = trending.movie_week()
 
     movies = list(trending_movies["results"])[:limit]
@@ -28,7 +28,7 @@ def get_trending_movie(limit=20):
     }
 
 # Get trending shows
-def get_trending_show(limit=20):
+def get_trending_show(limit=10):
     trending_shows = trending.tv_week()
 
     shows = list(trending_shows["results"])[:limit]
@@ -46,7 +46,7 @@ def get_trending_show(limit=20):
     }
 
 # Get popular movies
-def popular_movies(limit=20):
+def popular_movies(limit=10):
     popular_movies = movie.popular()
 
     popular_movies = list(popular_movies["results"])[:limit]
@@ -64,7 +64,7 @@ def popular_movies(limit=20):
     }
 
 # Get popular shows
-def popular_shows(limit=20):
+def popular_shows(limit=10):
     popular_shows = show_api.popular()
 
     popular_shows = list(popular_shows["results"])[:limit]
@@ -82,7 +82,7 @@ def popular_shows(limit=20):
     }
 
 # Get top rated movies
-def top_rated_movies(limit=20):
+def top_rated_movies(limit=10):
     top_rated_movies = movie.top_rated()
 
     top_rated_movies = list(top_rated_movies["results"])[:limit]
@@ -100,7 +100,7 @@ def top_rated_movies(limit=20):
     }
 
 # Get top rated shows
-def top_rated_shows(limit=20):
+def top_rated_shows(limit=10):
     top_rated_shows = show_api.top_rated()
 
     top_rated_shows = list(top_rated_shows["results"])[:limit]

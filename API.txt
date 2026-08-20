@@ -2,7 +2,8 @@ Tube/
 │
 ├── app/
 │   ├── app.py
-│   ├── config.py __save api_keys in as variable then use on others
+│   ├── config.py # save api_keys in as variable then use on others
+│   ├── database.py # to connect database with the backend
 │   │
 │   ├── routers/ __define your api endpoints
 │   │   ├── trending.py 
@@ -10,7 +11,7 @@ Tube/
 │   │   ├── movies.py
 │   │   └── tv.py
 │   │
-│   ├── services/ __logic code will be here
+│   ├── services/ # Funciion and logic code will be here
 │   │   ├── trending.py
 │   │   ├── search.py
 │   │   ├── movie_service.py
@@ -28,4 +29,14 @@ Tube/
 ├── requirements.txt
 └── README.md
 
+Netflix 8
+Amazon 9
+Disney+ 337
+Hulu 15
+HBO Max 1899
+Apple TV Plus 350
+Paramount Plus 531
+Peacock 387
+
 py -m uvicorn app.main:app --reload
+Use it inside virtaul environment

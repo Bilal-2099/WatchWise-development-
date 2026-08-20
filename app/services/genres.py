@@ -76,3 +76,53 @@ def get_shows_by_genre(genre_id, limit=20):
             for s in results
         ]
     }
+
+# Movies by Provider ID
+def get_movies_by_platform(provider_id, limit=10, region="US"):
+    filters = {
+        "with_watch_providers": provider_id,
+        "watch_region": region,
+        "sort_by": "popularity.desc"
+    }
+    
+    results = discover.discover_movies(filters)
+    title_key = "title"
+        
+    items = list(results)[:limit]
+    
+    return {
+        "results": [
+            {
+                "id": item["id"],
+                "title": item[title_key],
+                "rating": item["vote_average"],
+                "poster": base_image_url + item["poster_path"] if item["poster_path"] else None,
+            }
+            for item in items
+        ]
+    }
+
+# Shows by Provider ID
+def get_shows_by_platform(provider_id, limit=10, region="US"):
+    filters = {
+        "with_watch_providers": provider_id,
+        "watch_region": region,
+        "sort_by": "popularity.desc"
+    }
+    
+    results = discover.discover_tv_shows(filters)
+    title_key = "name"
+        
+    items = list(results)[:limit]
+    
+    return {
+        "results": [
+            {
+                "id": item["id"],
+                "title": item[title_key],
+                "rating": item["vote_average"],
+                "poster": base_image_url + item["poster_path"] if item["poster_path"] else None,
+            }
+            for item in items
+        ]
+    }

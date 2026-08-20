@@ -1,4 +1,4 @@
-from tmdbv3api import TMDb, Movie, TV
+from tmdbv3api import TMDb, Movie, TV, Discover
 from app.config import tmdb_api, base_image_url
 
 tmdb = TMDb()
@@ -6,6 +6,7 @@ tmdb.api_key = tmdb_api
 tmdb.language = 'en' 
 movie_api = Movie()
 show_api = TV()
+discover = Discover()
 
 # Search Movies
 def search_movie(query, limit=10):
@@ -80,7 +81,7 @@ def get_show(id):
    }
 
 # Recommendations Movies
-def get_recs_movies(movie_id, limit=20, ):
+def get_recs_movies(movie_id, limit=10, ):
     recs_movies = movie_api.recommendations(movie_id)
 
     recs_movies = list(recs_movies["results"])[:limit]
@@ -97,6 +98,7 @@ def get_recs_movies(movie_id, limit=20, ):
     ]
     }
 
+# Recommendations Shows
 def get_rec_shows(show_id,limit=20):
     recs_shows = show_api.recommendations(show_id)
 
@@ -112,4 +114,79 @@ def get_rec_shows(show_id,limit=20):
         }
         for s in recs_shows
     ]
+    }
+
+# Search Movies by Platforms
+def search_movies_by_platform(query, provider_id, limit=10, region="US"):
+
+    search_results = movie_api.search(query)
+    
+    # Filter search results to only include those matching the provider
+    filtered_items = []
+    for item in search_results:
+        # Check providers using TMDB's movie details/watch providers or check 
+        # if the item has the provider in its data if returned by the search wrapper.
+        # Alternatively, using discover with a keyword search if supported:
+        pass
+
+    # A cleaner approach using discover filters with a search query:
+    filters = {
+        "query": query,
+        "with_watch_providers": provider_id,
+        "watch_region": region,
+        "sort_by": "popularity.desc"
+    }
+    
+    results = discover.discover_movies(filters)
+    title_key = "title"
+        
+    items = list(results)[:limit]
+    
+    return {
+        "results": [
+            {
+                "id": item["id"],
+                "title": item[title_key],
+                "rating": item["vote_average"],
+                "poster": base_image_url + item["poster_path"] if item["poster_path"] else None,
+            }
+            for item in items
+        ]
+    }
+
+# Search Shows by Platforms
+def search_shows_by_platform(query, provider_id, limit=10, region="US"):
+
+    search_results = show_api.search(query)
+    
+    # Filter search results to only include those matching the provider
+    filtered_items = []
+    for item in search_results:
+        # Check providers using TMDB's movie details/watch providers or check 
+        # if the item has the provider in its data if returned by the search wrapper.
+        # Alternatively, using discover with a keyword search if supported:
+        pass
+
+    # A cleaner approach using discover filters with a search query:
+    filters = {
+        "query": query,
+        "with_watch_providers": provider_id,
+        "watch_region": region,
+        "sort_by": "popularity.desc"
+    }
+    
+    results = discover.discover_tv_shows(filters)
+        
+    items = list(results)[:limit]
+    
+    return {
+        "results": [
+            {
+                "id": item["id"],
+                "title": item["name"],
+                "rating": item["vote_average"],
+                "poster": base_image_url + item["poster_path"] if item["poster_path"] else None,
+            }
+            for item in items
+        ]
     }
