@@ -1,4 +1,4 @@
-from datetime import datetime, date
+from datetime import datetime, timezone, date
 from typing import Optional
 from sqlmodel import Field, SQLModel
 
@@ -7,8 +7,9 @@ class User(SQLModel, table=True):
     id: Optional[int] = Field(default=None, primary_key=True)
     username: str = Field(index=True, unique=True) # Should be unique
     email: str = Field(index=True, unique=True) # Should be unique
+    hashed_password: str
     profile_photo: Optional[str] = Field(default=None) # It is optional cause I am still thinking about it
-    created_at: datetime = Field(default_factory=datetime.utcnow)
+    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
 
 # Watchlist
 class Watchlist(SQLModel, table=True):
@@ -16,7 +17,7 @@ class Watchlist(SQLModel, table=True):
     user_id: int = Field(foreign_key="user.id", index=True) # Foreign key from User class
     tmdb_id: int # We will get this from TMDB
     media_type: str # "movie" or "tv"
-    added_at: datetime = Field(default_factory=datetime.utcnow) # Just to when user added 
+    added_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc)) # Just to when user added 
 
 # Dairy/Review
 class DiaryEntry(SQLModel, table=True):
@@ -28,4 +29,4 @@ class DiaryEntry(SQLModel, table=True):
     review_text: Optional[str] = Field(default=None)
     watch_date: date = Field(default_factory=date.today)
     is_rewatch: bool = Field(default=False)
-    created_at: datetime = Field(default_factory=datetime.utcnow)
+    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
