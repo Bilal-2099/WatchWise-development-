@@ -1,7 +1,8 @@
 venv
 .env
-API.txt
 B.txt
 WatchWise.docx
 watchwise.db
-diary.db
+__pycache__/
+*.py[cod]
+*$py.class
