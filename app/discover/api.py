@@ -1,9 +1,7 @@
 from fastapi import Depends, HTTPException, status, APIRouter, FastAPI, Path, Query
 from .services.trending import get_trending_movie, get_trending_show, popular_movies, popular_shows, top_rated_movies, top_rated_shows
 from .services.search import get_rec_shows, get_recs_movies, get_show, get_movie, search_movie, search_show
-from typing import List, Optional
 from .services.genres import get_movie_genres, get_show_genres, get_movies_by_platform, get_shows_by_platform, get_shows_by_genre, get_movies_by_genre
-from contextlib import asynccontextmanager
 from sqlmodel import Session
 from app.auth.security import get_current_user
 

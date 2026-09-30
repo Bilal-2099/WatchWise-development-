@@ -1,7 +1,10 @@
+from __future__ import annotations
 from datetime import datetime, timezone, date
-from typing import Optional
-from sqlmodel import Field, SQLModel
+from typing import Optional, List
+from sqlmodel import Field, SQLModel, Relationship
 from pydantic import BaseModel
+from sqlalchemy.orm import Mapped
+
 
 # User
 class User(SQLModel, table=True):
@@ -10,7 +13,14 @@ class User(SQLModel, table=True):
     email: str = Field(index=True, unique=True) # Should be unique
     hashed_password: str
     profile_photo: Optional[str] = Field(default=None) # It is optional cause I am still thinking about it
-    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc)) # Just to when user is added 
+    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc)) # Just to when user is added
+
+class UserPublic(BaseModel):
+    id: int
+    username: str
+    email: str
+    profile_photo: Optional[str] = None
+    created_at: datetime
 
 class UserCreate(BaseModel):
     username: str
@@ -34,6 +44,10 @@ class Watchlist(SQLModel, table=True):
     tmdb_id: int # We will get this from TMDB
     media_type: str # "movie" or "tv"
     added_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc)) # Just to when user adds
+
+class WatchlistCreate(BaseModel):
+    tmdb_id: int
+    media_type: str = Field(..., description="Must be 'movie' or 'tv'")
 
 # Dairy/Review
 class DiaryEntry(SQLModel, table=True):

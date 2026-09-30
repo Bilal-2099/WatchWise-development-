@@ -5,6 +5,7 @@ from fastapi.security import OAuth2PasswordBearer
 from app.models import User, RevokedToken, Token, UserCreate
 import jwt
 from app.config import SECRET_KEY, ALGORITHM, ACCESS_TOKEN_EXPIRE_MINUTES
+from sqlmodel import Session, select
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
 
@@ -22,7 +23,7 @@ def verify_password(plain_password: str, hashed_password: str) -> bool:
     )
 
 def get_current_user(token: str = Depends(oauth2_scheme), db: Session = Depends(get_session)):
-    is_revoked = db.query(RevokedToken).filter(RevokedToken.token == token).first()
+    is_revoked = db.exec(select(RevokedToken).where(RevokedToken.token == token)).first()
     if is_revoked:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
@@ -35,6 +36,7 @@ def get_current_user(token: str = Depends(oauth2_scheme), db: Session = Depends(
         detail="Could not validate credentials",
         headers={"WWW-Authenticate": "Bearer"},
     )
+    
     try:
         payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
         email: str = payload.get("sub")
@@ -43,7 +45,10 @@ def get_current_user(token: str = Depends(oauth2_scheme), db: Session = Depends(
     except jwt.PyJWTError:
         raise credentials_exception
         
-    user = db.query(User).filter(User.email == email).first()
+    statement = select(User).where(User.email == email)
+    user = db.exec(statement).first()
+    
     if user is None:
         raise credentials_exception
+        
     return user
