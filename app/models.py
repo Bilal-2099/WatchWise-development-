@@ -1,10 +1,8 @@
-from __future__ import annotations
 from datetime import datetime, timezone, date
-from typing import Optional, List
+from typing import Optional, Literal
 from sqlmodel import Field, SQLModel, Relationship
 from pydantic import BaseModel
 from sqlalchemy.orm import Mapped
-
 
 # User
 class User(SQLModel, table=True):
@@ -55,8 +53,27 @@ class DiaryEntry(SQLModel, table=True):
     user_id: int = Field(foreign_key="user.id", index=True) # Foreign key from User class
     tmdb_id: int # We will get this from TMDB
     media_type: str # "movie" or "tv"
-    rating: float = Field(description="Star rating from 0.5 to 10.0")
-    review_text: Optional[str] = Field(default=None)
+    rating: Optional[float] = Field(default=None, ge=0.5, le=10.0, description="Star rating from 0.5 to 10.0")
+    review_text: Optional[str] = None
     watch_date: date = Field(default_factory=date.today)
     is_rewatch: bool = Field(default=False)
     created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc)) # Just to when user adds
+
+class DiaryEntryCreate(SQLModel):
+    tmdb_id: int
+    media_type: str
+    rating: Optional[float] = Field(default=None, ge=0.5, le=10.0)
+    review_text: Optional[str] = None
+    watch_date: date = Field(default_factory=date.today)
+    is_rewatch: bool = Field(default=False)
+
+class DiaryEntryUpdate(SQLModel):
+    rating: Optional[float] = Field(default=None, ge=0.5, le=10.0)
+    review_text: Optional[str] = None
+    watch_date: Optional[date] = None
+    is_rewatch: Optional[bool] = None
+
+class DiaryEntryPublic(DiaryEntryCreate):
+    id: int
+    user_id: int
+    created_at: datetime

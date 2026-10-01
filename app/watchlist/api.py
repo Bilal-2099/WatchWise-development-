@@ -10,15 +10,11 @@ tmdb = TMDb()
 tmdb.api_key = tmdb_api
 tmdb.language = 'en' 
 
-UserEntry = APIRouter()
+WatchListRoutes = APIRouter()
 movie_api = Movie()
 show_api = TV()
 
-@UserEntry.get("")
-async def root():
-    return {"message": "Just starting"}
-
-@UserEntry.post("/watchlist/add/", status_code=status.HTTP_201_CREATED)
+@WatchListRoutes.post("/add", status_code=status.HTTP_201_CREATED)
 def add_to_watchlist(item_data: WatchlistCreate, current_user: User = Depends(get_current_user), db: Session = Depends(get_session)):
     """
     Add a movie or TV show to the current user's watchlist using its TMDB ID.
@@ -46,7 +42,7 @@ def add_to_watchlist(item_data: WatchlistCreate, current_user: User = Depends(ge
 
     return {"message": "Successfully added to watchlist", "watchlist_item": new_watchlist_item}
 
-@UserEntry.delete("/watchlist/remove/{watchlist_id}/", status_code=status.HTTP_200_OK)
+@WatchListRoutes.delete("/remove/{watchlist_id}", status_code=status.HTTP_200_OK)
 def remove_from_watchlist(watchlist_id: int, current_user: User = Depends(get_current_user), db: Session = Depends(get_session)):
     """
     Remove an item from the user's watchlist by its unique watchlist entry ID.
@@ -68,7 +64,7 @@ def remove_from_watchlist(watchlist_id: int, current_user: User = Depends(get_cu
 
     return {"message": "Successfully removed from watchlist"}
 
-@UserEntry.get("/watchlist/", status_code=status.HTTP_200_OK)
+@WatchListRoutes.get("/", status_code=status.HTTP_200_OK)
 def get_user_watchlist(
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_session)
@@ -76,34 +72,24 @@ def get_user_watchlist(
     """
     Fetch the logged-in user's watchlist and enrich it with live data from TMDB.
     """
-    # 1. Fetch all watchlist records for this user from the database
-    print(f"Fetching watchlist for User ID: {current_user.id}")
-
     statement = select(Watchlist).where(Watchlist.user_id == current_user.id)
     watchlist_items = db.exec(statement).all()
-
-    print(f"Found {len(watchlist_items)} items in database.")
-
     enriched_results = []
 
     for item in watchlist_items:
         try:
-            # 2. Fetch details from TMDB depending on media type
             if item.media_type == "movie":
-                # Assuming you have a helper like movie_api.details(item.tmdb_id)
                 tmdb_data = movie_api.details(item.tmdb_id)
                 title = tmdb_data.get("title")
             else:
-                # Assuming you have a helper like show_api.details(item.tmdb_id)
                 tmdb_data = show_api.details(item.tmdb_id)
-                title = tmdb_data.get("name") # TV shows use 'name'
+                title = tmdb_data.get("name")
 
             poster_path = tmdb_data.get("poster_path")
             poster_url = base_image_url + poster_path if poster_path else None
 
-            # 3. Format to match your search results structure
             enriched_results.append({
-                "watchlist_id": item.id, # Useful so the frontend knows what ID to delete!
+                "watchlist_id": item.id,
                 "id": item.tmdb_id,
                 "media_type": item.media_type,
                 "title": title,
@@ -112,13 +98,12 @@ def get_user_watchlist(
                 "added_at": item.added_at
             })
         except Exception as e:
-            # If TMDB fails for a specific item, don't crash the whole list; log it and skip or pass placeholder
             print(f"Could not fetch TMDB details for {item.media_type} ID {item.tmdb_id}: {e}")
 
     return {"results": enriched_results}
 
 
-@UserEntry.get("/watchlist/check", status_code=status.HTTP_200_OK)
+@WatchListRoutes.get("/check", status_code=status.HTTP_200_OK)
 def check_watchlist_status(
     tmdb_id: int = Query(..., description="The TMDB ID of the movie or TV show"),
     media_type: str = Query(..., description="Must be 'movie' or 'tv'"),
