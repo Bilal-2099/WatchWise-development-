@@ -28,9 +28,26 @@ def create_diary_entry(
     Log a new watch event to the user's diary.
     """
     validate_media_type(entry_in.media_type)
+    # Check if the user has logged this movie/show previously
+    existing_entry_query = select(DiaryEntry).where(
+        DiaryEntry.user_id == current_user.id,
+        DiaryEntry.tmdb_id == entry_in.tmdb_id,
+        DiaryEntry.media_type == entry_in.media_type
+    )
+    has_watched_before = db.exec(existing_entry_query).first() is not None
+    print(has_watched_before)
+    # Convert Pydantic model to dictionary
+    entry_data = entry_in.model_dump()
+   
+
+    # Automatically set is_rewatch to True if they've watched it before
+    if has_watched_before:
+        entry_data["is_rewatch"] = True
+
+    print(entry_data)
 
     db_entry = DiaryEntry(
-        **entry_in.model_dump(),
+        **entry_data,
         user_id=current_user.id
     )
     
@@ -63,9 +80,6 @@ def get_diary_entries(
     entries = db.exec(statement).all()
     return entries
 
-# Checked till now
-#--------------------------------------------------------------------------------------------------
-# 3. GET Single Diary Entry
 @DiaryEntryRoutes.get("/{entry_id}", response_model=DiaryEntryPublic, status_code=status.HTTP_200_OK)
 def get_diary_entry(
     entry_id: int,
@@ -85,9 +99,7 @@ def get_diary_entry(
         
     return entry
 
-
-# 4. PATCH Update Diary Entry
-@DiaryEntryRoutes.patch("/{entry_id}", response_model=DiaryEntryPublic, status_code=status.HTTP_200_OK)
+@DiaryEntryRoutes.patch("/update/{entry_id}", response_model=DiaryEntryPublic, status_code=status.HTTP_200_OK)
 def update_diary_entry(
     entry_id: int,
     entry_update: DiaryEntryUpdate,
@@ -105,7 +117,6 @@ def update_diary_entry(
             detail="Diary entry not found."
         )
         
-    # Extract only the fields the user explicitly sent
     update_data = entry_update.model_dump(exclude_unset=True)
     
     for key, value in update_data.items():
@@ -116,9 +127,7 @@ def update_diary_entry(
     db.refresh(entry)
     return entry
 
-
-# 5. DELETE Diary Entry
-@DiaryEntryRoutes.delete("/{entry_id}", status_code=status.HTTP_200_OK)
+@DiaryEntryRoutes.delete("/delete/{entry_id}", status_code=status.HTTP_200_OK)
 def delete_diary_entry(
     entry_id: int,
     current_user: User = Depends(get_current_user),
@@ -138,3 +147,24 @@ def delete_diary_entry(
     db.delete(entry)
     db.commit()
     return None
+
+@DiaryEntryRoutes.get("/media-entries/", response_model=List[DiaryEntryPublic], status_code=status.HTTP_200_OK)
+def get_diary_entries_by_media_query(
+    tmdb_id: int = Query(..., description="The TMDB ID of the movie or TV show"),
+    media_type: str = Query(..., description="Either 'movie' or 'tv'"),
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_session)
+):
+    """
+    Retrieve all diary entries for a specific movie or TV show via query parameters.
+    """
+    validate_media_type(media_type)
+
+    statement = select(DiaryEntry).where(
+        DiaryEntry.user_id == current_user.id,
+        DiaryEntry.tmdb_id == tmdb_id,
+        DiaryEntry.media_type == media_type
+    ).order_by(DiaryEntry.watch_date.desc(), DiaryEntry.created_at.desc())
+
+    entries = db.exec(statement).all()
+    return entries
