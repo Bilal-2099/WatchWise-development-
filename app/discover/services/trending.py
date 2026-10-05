@@ -21,6 +21,7 @@ def get_trending_movie(limit=10):
             "id": m["id"],
             "title": m["title"],
             "rating": m["vote_average"],
+            "year": m.release_date[:4] if m.release_date else None, # Added year
             "poster": base_image_url + m["poster_path"] if m["poster_path"] else None,
         }
         for m in movies
@@ -39,6 +40,7 @@ def get_trending_show(limit=10):
             "id": s["id"],
             "title": s["name"],
             "rating": s["vote_average"],
+            "year": s.first_air_date[:4] if s.first_air_date else None, # Added year
             "poster": base_image_url + s["poster_path"] if s["poster_path"] else None,
         }
         for s in shows
@@ -57,6 +59,7 @@ def popular_movies(limit=10):
             "id": m["id"],
             "title": m["title"],
             "rating": m["vote_average"],
+            "year": m.release_date[:4] if m.release_date else None, # Added year
             "poster": base_image_url + m["poster_path"] if m["poster_path"] else None,
         }
         for m in popular_movies
@@ -75,6 +78,7 @@ def popular_shows(limit=10):
             "id": s["id"],
             "title": s["name"],
             "rating": s["vote_average"],
+            "year": s.first_air_date[:4] if s.first_air_date else None, # Added year
             "poster": base_image_url + s["poster_path"] if s["poster_path"] else None,
         }
         for s in popular_shows
@@ -93,6 +97,7 @@ def top_rated_movies(limit=10):
             "id": m["id"],
             "title": m["title"],
             "rating": m["vote_average"],
+            "year": m.release_date[:4] if m.release_date else None, # Added year
             "poster": base_image_url + m["poster_path"] if m["poster_path"] else None,
         }
         for m in top_rated_movies
@@ -111,6 +116,7 @@ def top_rated_shows(limit=10):
             "id": s["id"],
             "title": s["name"],
             "rating": s["vote_average"],
+            "year": s.first_air_date[:4] if s.first_air_date else None, # Added year
             "poster": base_image_url + s["poster_path"] if s["poster_path"] else None,
         }
         for s in top_rated_shows

@@ -19,18 +19,15 @@ def add_to_watchlist(item_data: WatchlistCreate, current_user: User = Depends(ge
     """
     Add a movie or TV show to the current user's watchlist using its TMDB ID.
     """
-    # 1. Validate media_type
     if item_data.media_type not in ["movie", "tv"]:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="media_type must be either 'movie' or 'tv'.")
 
-    # 2. Check if this item is already in the user's watchlist
     statement = select(Watchlist).where(Watchlist.user_id == current_user.id, Watchlist.tmdb_id == item_data.tmdb_id, Watchlist.media_type == item_data.media_type)
     existing_item = db.exec(statement).first()
 
     if existing_item:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="This item is already in your watchlist.")
 
-    # 3. Create the new watchlist entry
     new_watchlist_item = Watchlist(
         user_id=current_user.id,
         tmdb_id=item_data.tmdb_id,
@@ -47,18 +44,14 @@ def remove_from_watchlist(watchlist_id: int, current_user: User = Depends(get_cu
     """
     Remove an item from the user's watchlist by its unique watchlist entry ID.
     """
-    # 1. Fetch the watchlist item by its ID
     watchlist_item = db.get(Watchlist, watchlist_id)
 
-    # 2. Check if it exists
     if not watchlist_item:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Watchlist item not found.")
 
-    # 3. Security check: Ensure the item belongs to the currently logged-in user!
     if watchlist_item.user_id != current_user.id:
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="You do not have permission to delete this item.")
 
-    # 4. Delete the item from the database
     db.delete(watchlist_item)
     db.commit()
 
@@ -120,7 +113,6 @@ def check_watchlist_status(
             detail="media_type must be either 'movie' or 'tv'."
         )
 
-    # Search the database for an existing entry
     statement = select(Watchlist).where(
         Watchlist.user_id == current_user.id,
         Watchlist.tmdb_id == tmdb_id,

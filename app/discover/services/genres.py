@@ -50,6 +50,7 @@ def get_movies_by_genre(genre_id, limit=20):
                 "id": m["id"],
                 "title": m["title"],
                 "rating": m["vote_average"],
+                "year": m.release_date[:4] if m.release_date else None, # Added year
                 "poster": base_image_url + m["poster_path"] if m["poster_path"] else None,
             }
             for m in results
@@ -71,6 +72,7 @@ def get_shows_by_genre(genre_id, limit=20):
                 "id": s["id"],
                 "title": s["name"],
                 "rating": s["vote_average"],
+                "year": s.first_air_date[:4] if s.first_air_date else None, # Added year
                 "poster": base_image_url + s["poster_path"] if s["poster_path"] else None,
             }
             for s in results
@@ -96,6 +98,7 @@ def get_movies_by_platform(provider_id, limit=10, region="US"):
                 "id": item["id"],
                 "title": item[title_key],
                 "rating": item["vote_average"],
+                "year": m.release_date[:4] if m.release_date else None, # Added year
                 "poster": base_image_url + item["poster_path"] if item["poster_path"] else None,
             }
             for item in items
@@ -121,6 +124,7 @@ def get_shows_by_platform(provider_id, limit=10, region="US"):
                 "id": item["id"],
                 "title": item[title_key],
                 "rating": item["vote_average"],
+                "year": s.first_air_date[:4] if s.first_air_date else None, # Added year
                 "poster": base_image_url + item["poster_path"] if item["poster_path"] else None,
             }
             for item in items
