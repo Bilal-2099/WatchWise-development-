@@ -3,7 +3,7 @@ from sqlmodel import Session, select
 from typing import List, Optional
 from app.auth.security import get_current_user
 from app.database import get_session
-from app.models import User, DiaryEntryCreate, DiaryEntry, DiaryEntryPublic, DiaryEntryUpdate
+from app.models import User, DiaryEntryCreate, DiaryEntry, DiaryEntryPublic, DiaryEntryUpdate, Watched
 
 DiaryEntryRoutes = APIRouter()
 
@@ -25,33 +25,44 @@ def create_diary_entry(
     db: Session = Depends(get_session)
 ):
     """
-    Log a new watch event to the user's diary.
+    Log a new watch event to the user's diary and automatically 
+    ensure it is recorded in their Watched history.
     """
     validate_media_type(entry_in.media_type)
-    # Check if the user has logged this movie/show previously
+
     existing_entry_query = select(DiaryEntry).where(
         DiaryEntry.user_id == current_user.id,
         DiaryEntry.tmdb_id == entry_in.tmdb_id,
         DiaryEntry.media_type == entry_in.media_type
     )
     has_watched_before = db.exec(existing_entry_query).first() is not None
-    print(has_watched_before)
-    # Convert Pydantic model to dictionary
+    
     entry_data = entry_in.model_dump()
-   
 
-    # Automatically set is_rewatch to True if they've watched it before
     if has_watched_before:
         entry_data["is_rewatch"] = True
-
-    print(entry_data)
 
     db_entry = DiaryEntry(
         **entry_data,
         user_id=current_user.id
     )
-    
     db.add(db_entry)
+
+    watched_query = select(Watched).where(
+        Watched.user_id == current_user.id,
+        Watched.tmdb_id == entry_in.tmdb_id,
+        Watched.media_type == entry_in.media_type
+    )
+    watched_record = db.exec(watched_query).first()
+
+    if not watched_record:
+        db_watched = Watched(
+            user_id=current_user.id,
+            tmdb_id=entry_in.tmdb_id,
+            media_type=entry_in.media_type
+        )
+        db.add(db_watched)
+
     db.commit()
     db.refresh(db_entry)
     return db_entry

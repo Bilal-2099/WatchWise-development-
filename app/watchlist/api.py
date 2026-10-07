@@ -2,7 +2,7 @@ from fastapi import Depends, HTTPException, status, APIRouter, FastAPI, Path, Qu
 from sqlmodel import Session, select
 from app.auth.security import get_current_user
 from app.database import get_session
-from app.models import User, Watchlist, WatchlistCreate
+from app.models import User, Watchlist, WatchlistCreate, WatchedPublic, WatchedCreate, Watched
 from tmdbv3api import TMDb, Movie, TV
 from app.config import tmdb_api, base_image_url
 
@@ -14,6 +14,7 @@ WatchListRoutes = APIRouter()
 movie_api = Movie()
 show_api = TV()
 
+# Add to Watchlist
 @WatchListRoutes.post("/add", status_code=status.HTTP_201_CREATED)
 def add_to_watchlist(item_data: WatchlistCreate, current_user: User = Depends(get_current_user), db: Session = Depends(get_session)):
     """
@@ -39,6 +40,7 @@ def add_to_watchlist(item_data: WatchlistCreate, current_user: User = Depends(ge
 
     return {"message": "Successfully added to watchlist", "watchlist_item": new_watchlist_item}
 
+# Remove from Watchlist
 @WatchListRoutes.delete("/remove/{watchlist_id}", status_code=status.HTTP_200_OK)
 def remove_from_watchlist(watchlist_id: int, current_user: User = Depends(get_current_user), db: Session = Depends(get_session)):
     """
@@ -57,6 +59,7 @@ def remove_from_watchlist(watchlist_id: int, current_user: User = Depends(get_cu
 
     return {"message": "Successfully removed from watchlist"}
 
+# Get all Watchlist
 @WatchListRoutes.get("/", status_code=status.HTTP_200_OK)
 def get_user_watchlist(
     current_user: User = Depends(get_current_user),
@@ -95,7 +98,7 @@ def get_user_watchlist(
 
     return {"results": enriched_results}
 
-
+# Check from Watchlist
 @WatchListRoutes.get("/check", status_code=status.HTTP_200_OK)
 def check_watchlist_status(
     tmdb_id: int = Query(..., description="The TMDB ID of the movie or TV show"),
@@ -130,3 +133,4 @@ def check_watchlist_status(
         "in_watchlist": False,
         "watchlist_id": None
     }
+

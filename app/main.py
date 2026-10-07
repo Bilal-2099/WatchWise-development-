@@ -7,8 +7,9 @@ from fastapi.staticfiles import StaticFiles
 from contextlib import asynccontextmanager
 from sqlmodel import Session
 from app.database import init_db, get_session
-from app.models import User, Watchlist, DiaryEntry
 from .diaryentry.api import DiaryEntryRoutes
+from .watched.api import WatchedRoutes
+from .list.api import CustomListRoutes
 
 app = FastAPI()
 
@@ -26,3 +27,5 @@ app.include_router(DiscoverRoutes, prefix="/discover")
 app.include_router(AuthRoutes, prefix="/auth")
 app.include_router(WatchListRoutes, prefix="/watchlist")
 app.include_router(DiaryEntryRoutes, prefix="/diaryentry")
+app.include_router(WatchedRoutes, prefix="/watched")
+app.include_router(CustomListRoutes, prefix="/lists")

@@ -78,3 +78,56 @@ class DiaryEntryPublic(DiaryEntryCreate):
     user_id: int
     created_at: datetime
 
+class CustomList(SQLModel, table=True):
+    id: Optional[int] = Field(default=None, primary_key=True)
+    user_id: int = Field(foreign_key="user.id", index=True)
+    title: str = Field(index=True)
+    description: Optional[str] = None
+    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+
+class ListItem(SQLModel, table=True):
+    id: Optional[int] = Field(default=None, primary_key=True)
+    list_id: int = Field(foreign_key="customlist.id", index=True)
+    tmdb_id: int
+    media_type: str # "movie" or "tv"
+    added_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+
+class Watched(SQLModel, table=True):
+    id: Optional[int] = Field(default=None, primary_key=True)
+    user_id: int = Field(foreign_key="user.id", index=True)
+    tmdb_id: int
+    media_type: str # "movie" or "tv"
+    watched_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+
+class CustomListCreate(SQLModel):
+    title: str
+    description: Optional[str] = None
+
+class CustomListUpdate(SQLModel):
+    title: Optional[str] = None
+    description: Optional[str] = None
+
+class CustomListPublic(CustomListCreate):
+    id: int
+    user_id: int
+    created_at: datetime
+
+# List Item Schemas
+class ListItemCreate(SQLModel):
+    tmdb_id: int
+    media_type: str = Field(..., description="Must be 'movie' or 'tv'")
+
+class ListItemPublic(ListItemCreate):
+    id: int
+    list_id: int
+    added_at: datetime
+
+# Watched Schemas
+class WatchedCreate(SQLModel):
+    tmdb_id: int
+    media_type: str = Field(..., description="Must be 'movie' or 'tv'")
+
+class WatchedPublic(WatchedCreate):
+    id: int
+    user_id: int
+    watched_at: datetime
