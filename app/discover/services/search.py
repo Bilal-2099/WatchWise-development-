@@ -9,36 +9,40 @@ show_api = TV()
 discover = Discover()
 
 # Search Movies
-def search_movie(query, limit=10):
-    if not query.strip():
-        return {"results": []}
+def search_movie(query: str, page: int = 1):
+    if not isinstance(query, str) or not query.strip():
+        return {"page": page, "results": []}
 
-    
-    search_results = movie_api.search(query)
-    results = list(search_results)[:limit]
+    search_results = movie_api.search(query.strip(), page=page)
+    results = getattr(search_results, "results", [])
 
     return {
+        "page": page,
         "results": [
-        {
-            "id": item["id"],
-            "title": item["title"],
-            "year": item.release_date[:4] if item.release_date else None, # Added year
-            "rating": item["vote_average"] if item["vote_average"] else None,
-            "poster": base_image_url + item["poster_path"] if item["poster_path"] else None
-        }
-        for item in results
-    ]
-   }
+            {
+                "id": item.id,
+                "title": item.title,
+                "year": (item.release_date[:4]
+                    if getattr(item, "release_date", None) else None),
+                "rating": (item.vote_average
+                    if getattr(item, "vote_average", None) is not None else None),
+                "poster": (
+                    base_image_url + item.poster_path
+                    if getattr(item, "poster_path", None) else None),}
+            for item in results
+        ],
+    }
 
 # Search Shows
-def search_show(query, limit=10):
-    if not query.strip():
-        return {"results": []}
+def search_show(query: str, page: int = 1):
+    if not isinstance(query, str) or not query.strip():
+        return {"page": page, "results": []}
 
-    search_results = show_api.search(query)
-    results = list(search_results)[:limit]
+    search_results = show_api.search(query.strip(), page=page)
+    results = getattr(search_results, "results", [])
 
     return {
+        "page": page,
         "results": [
         {
             "id": item["id"],

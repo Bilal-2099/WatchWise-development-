@@ -1,11 +1,11 @@
-from tmdbv3api import TMDb, Movie, TV, Discover
+from tmdbv3api import TMDb, Movie, TV, Discover, Trending
 from dotenv import load_dotenv
 import os
 
 load_dotenv()
 tmdb_api = os.getenv('API_Key')
 base_image_url = os.getenv('base_tmdb_image_url')
-
+trending = Trending()
 tmdb = TMDb()
 tmdb.api_key = tmdb_api
 tmdb.language = 'en' 
@@ -166,24 +166,27 @@ def get_show(id):
 # print("------------------")
 # print(get_movie(414906))
 
-print("Print show detail")
-print("------------------")
-print(get_show(61889))
+# print("Print show detail")
+# print("------------------")
+# print(get_show(61889))
 
-# import json
+def get_trending_movie(page: int = 1):
+    trending_movies = trending.movie_week(page=page)
 
-# class CustomEncoder(json.JSONEncoder):
-#     def default(self, obj):
-#         # Check if the object has a __dict__ attribute (meaning it's a custom class instance)
-#         if hasattr(obj, '__dict__'):
-#             return obj.__dict__
-#         # Fallback for standard types
-#         return super().default(obj)
+    movies = getattr(trending_movies, "results", [])
 
-# def get_all_movie(id):
-#     movie_detail = movie_api.details(id)
-#     with open("output.txt", "w") as file:
-#         json.dump(movie_detail, file, cls=CustomEncoder, indent=4)
-#     # print(movie_detail)
+    return {
+        "page" : page,
+        "results": [
+        {
+            "id": m["id"],
+            "title": m["title"],
+            "rating": m["vote_average"],
+            "year": m.release_date[:4] if m.release_date else None, # Added year
+            "poster": base_image_url + m["poster_path"] if m["poster_path"] else None,
+        }
+        for m in movies
+    ]
+    }
 
-# get_all_movie(299534)
+print(get_trending_movie(1))

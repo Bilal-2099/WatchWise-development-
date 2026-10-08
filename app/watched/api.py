@@ -5,6 +5,7 @@ from app.database import get_session
 from app.models import User, WatchedPublic, WatchedCreate, Watched
 from tmdbv3api import TMDb, Movie, TV
 from app.config import tmdb_api, base_image_url
+from app.service import remove_item_from_watchlist
 
 tmdb = TMDb()
 tmdb.api_key = tmdb_api
@@ -47,6 +48,10 @@ def mark_as_watched(
 
     db_watched = Watched(**watched_in.model_dump(), user_id=current_user.id)
     db.add(db_watched)
+
+    # Remove from watchlist
+    remove_item_from_watchlist(db, current_user.id, watched_in.tmdb_id, watched_in.media_type)
+
     db.commit()
     db.refresh(db_watched)
     return db_watched
@@ -80,6 +85,8 @@ def remove_watched(
 
 @WatchedRoutes.get("/", status_code=status.HTTP_200_OK)
 def get_user_watched_list(
+    limit: int = Query( 10, ge=1, le=100, description="Number of entries to return"),
+    offset: int = Query(0, ge=0, description="Number of entries to skip"),
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_session)
 ):
@@ -87,6 +94,7 @@ def get_user_watched_list(
     Fetch the logged-in user's watched history and enrich it with live data from TMDB.
     """
     statement = select(Watched).where(Watched.user_id == current_user.id)
+    statement = statement.offset(offset).limit(limit)
     watched_items = db.exec(statement).all()
     enriched_results = []
 

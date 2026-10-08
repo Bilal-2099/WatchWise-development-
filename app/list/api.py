@@ -21,7 +21,7 @@ CustomListRoutes = APIRouter(tags=["Custom Lists"])
 movie_api = Movie()
 show_api = TV()
 
-@CustomListRoutes.post("/create", status_code=status.HTTP_201_CREATED)
+@CustomListRoutes.post("/create/", status_code=status.HTTP_201_CREATED)
 def create_custom_list(
     list_data: CustomListCreate, 
     current_user: User = Depends(get_current_user), 
@@ -43,18 +43,21 @@ def create_custom_list(
 
 @CustomListRoutes.get("/", status_code=status.HTTP_200_OK)
 def get_user_custom_lists(
-    current_user: User = Depends(get_current_user), 
+    current_user: User = Depends(get_current_user),
+    # limit: int = Query(20, ge=1, le=100, description="Number of entries to return"),
+    # offset: int = Query(0, ge=0, description="Number of entries to skip"),
     db: Session = Depends(get_session)
 ):
     """
     Fetch all custom lists created by the logged-in user.
     """
     statement = select(CustomList).where(CustomList.user_id == current_user.id)
+    # statement.offset(offset).limit(limit)
     lists = db.exec(statement).all()
     
     return {"results": lists}
 
-@CustomListRoutes.patch("/update/{list_id}", status_code=status.HTTP_200_OK)
+@CustomListRoutes.patch("/update/{list_id}/", status_code=status.HTTP_200_OK)
 def update_custom_list(
     list_id: int, 
     list_data: CustomListUpdate, 
@@ -82,7 +85,7 @@ def update_custom_list(
 
     return {"message": "Custom list updated successfully", "list": custom_list}
 
-@CustomListRoutes.delete("/delete/{list_id}", status_code=status.HTTP_200_OK)
+@CustomListRoutes.delete("/delete/{list_id}/", status_code=status.HTTP_200_OK)
 def delete_custom_list(
     list_id: int, 
     current_user: User = Depends(get_current_user), 
@@ -109,7 +112,7 @@ def delete_custom_list(
 
     return {"message": "Custom list deleted successfully"}
 
-@CustomListRoutes.post("/{list_id}/add", status_code=status.HTTP_201_CREATED)
+@CustomListRoutes.post("/{list_id}/add/", status_code=status.HTTP_201_CREATED)
 def add_item_to_custom_list(
     list_id: int, 
     item_data: ListItemCreate, 
@@ -150,7 +153,7 @@ def add_item_to_custom_list(
 
     return {"message": "Successfully added item to custom list", "item": new_list_item}
 
-@CustomListRoutes.delete("/{list_id}/delete/{item_id}", status_code=status.HTTP_200_OK)
+@CustomListRoutes.delete("/{list_id}/delete/{item_id}/", status_code=status.HTTP_200_OK)
 def remove_item_from_custom_list(
     list_id: int, 
     item_id: int, 
@@ -177,9 +180,11 @@ def remove_item_from_custom_list(
     return {"message": "Successfully removed item from custom list"}
 
 
-@CustomListRoutes.get("/{list_id}", status_code=status.HTTP_200_OK)
+@CustomListRoutes.get("/{list_id}/", status_code=status.HTTP_200_OK)
 def get_custom_list_details(
     list_id: int, 
+    # limit: int = Query(20, ge=1, le=100, description="Number of entries to return"),
+    # offset: int = Query(0, ge=0, description="Number of entries to skip"),
     current_user: User = Depends(get_current_user), 
     db: Session = Depends(get_session)
 ):

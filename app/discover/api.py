@@ -9,39 +9,39 @@ DiscoverRoutes = APIRouter()
 
 # Trending APIs
 @DiscoverRoutes.get("/trending/movies/")
-async def trend_movies(limit: int = Query(10, ge=1, le=50, description="Number of Movies to return"), current_user: User = Depends(get_current_user)):
-    return get_trending_movie(limit)
+async def trend_movies(page: int = Query(1, ge=1, description="TMDB page number"), current_user: User = Depends(get_current_user)):
+    return get_trending_movie(page=page)
 
 @DiscoverRoutes.get("/trending/shows/")
-async def trend_shows(limit: int = Query(10, ge=1, le=50, description="Number of Shows to return"), current_user: User = Depends(get_current_user)):
-    return get_trending_show(limit)
+async def trend_shows(page: int = Query(1, ge=1, description="TMDB page number"), current_user: User = Depends(get_current_user)):
+    return get_trending_show(page=page)
 
 # Popular Apis
 @DiscoverRoutes.get("/popular/movies/")
-async def get_popular_movies(limit: int = Query(10, ge=1, le=50, description="Number of Movies to return"), current_user: User = Depends(get_current_user)):
-    return popular_movies(limit)
+async def get_popular_movies(page: int = Query(1, ge=1, description="TMDB page number"), current_user: User = Depends(get_current_user)):
+    return popular_movies(page=page)
 
 @DiscoverRoutes.get("/popular/shows/")
-async def get_popular_shows(limit: int = Query(10, ge=1, le=50, description="Number of Shows to return"), current_user: User = Depends(get_current_user)):
-    return popular_shows(limit)
+async def get_popular_shows(page: int = Query(1, ge=1, description="TMDB page number"), current_user: User = Depends(get_current_user)):
+    return popular_shows(page=page)
 
 # Search APIs
 @DiscoverRoutes.get("/search/movies/")
-async def searches_movies(query: str = Query(..., min_length=1, description="Movie search query"), current_user: User = Depends(get_current_user)):
-    return search_movie(query)
+async def searches_movies(query: str = Query(..., min_length=1, description="Movie search query"), page: int = Query(1, ge=1, description="TMDB page number"), current_user: User = Depends(get_current_user)):
+    return search_movie(query=query, page=page)
 
 @DiscoverRoutes.get("/search/shows/")
-async def searches_shows(query: str = Query(..., min_length=1, description="Show search query"), current_user: User = Depends(get_current_user)):
-    return search_show(query)
+async def searches_shows(query: str = Query(..., min_length=1, description="Movie search query"), page: int = Query(1, ge=1, description="TMDB page number"), current_user: User = Depends(get_current_user)):
+    return search_show(query, page=page)
 
 # Top Rated Apis
 @DiscoverRoutes.get("/top_rated/movies/")
-async def get_top_rated_movies(limit: int = Query(10, ge=1, le=50, description="Number of Movies to return"), current_user: User = Depends(get_current_user)):
-    return top_rated_movies(limit)
+async def get_top_rated_movies(page: int = Query(1, ge=1, description="TMDB page number"), current_user: User = Depends(get_current_user)):
+    return top_rated_movies(page=page)
 
 @DiscoverRoutes.get("/top_rated/shows/")
-async def get_top_rated_shows(limit: int = Query(10, ge=1, le=50, description="Number of Shows to return"), current_user: User = Depends(get_current_user)):
-    return top_rated_shows(limit)
+async def get_top_rated_shows(page: int = Query(1, ge=1, description="TMDB page number"), current_user: User = Depends(get_current_user)):
+    return top_rated_shows(page=page)
 
 # Movie/Show by ID
 @DiscoverRoutes.get("/movie/{id}/")
@@ -72,18 +72,18 @@ async def get_show_genres_list(current_user: User = Depends(get_current_user)):
 
 # Get Movies By Genre
 @DiscoverRoutes.get("/genre/{genre_id}/movies/")
-async def get_movies_by_genres(genre_id: int = Path(...),  limit: int = Query(10, ge=1, le=50), current_user: User = Depends(get_current_user)):
+async def get_movies_by_genres(genre_id: int = Path(...), page: int = Query(1, ge=1, description="TMDB page number"), current_user: User = Depends(get_current_user)):
     return get_movies_by_genre(genre_id, limit)
 
 # Get Shows By Genre
 @DiscoverRoutes.get("/genre/{genre_id}/shows/")
-async def get_shows_by_genres(genre_id: int = Path(...), limit: int = Query(10, ge=1, le=50), current_user: User = Depends(get_current_user)):
+async def get_shows_by_genres(genre_id: int = Path(...), page: int = Query(1, ge=1, description="TMDB page number"), current_user: User = Depends(get_current_user)):
     return get_shows_by_genre(genre_id, limit)
 
 @DiscoverRoutes.get("/movies/providers/{provider_id}/")
-async def movies_by_platform(provider_id: int = Path(...), limit: int = Query(10, ge=1, le=50), current_user: User = Depends(get_current_user)):
-    return get_movies_by_platform(provider_id, limit)
+async def movies_by_platform(provider_id: int = Path(...), page: int = Query(1, ge=1, description="TMDB page number"), current_user: User = Depends(get_current_user)):
+    return get_movies_by_platform(provider_id, page=page)
 
 @DiscoverRoutes.get("/shows/providers/{provider_id}/")
-async def shows_by_platform(provider_id: int = Path(...), limit: int = Query(10, ge=1, le=50), current_user: User = Depends(get_current_user)):
-    return get_shows_by_platform(provider_id, limit)
+async def shows_by_platform(provider_id: int = Path(...), page: int = Query(1, ge=1, description="TMDB page number"), current_user: User = Depends(get_current_user)):
+    return get_shows_by_platform(provider_id, page=page)

@@ -36,15 +36,16 @@ def get_show_genres():
     }
 
 # Get Movies by Genre ID
-def get_movies_by_genre(genre_id, limit=20):
+def get_movies_by_genre(genre_id, page: int = 1):
     discover_results = discover.discover_movies({
         "with_genres": genre_id,
         "sort_by": "popularity.desc"
     })
     
-    results = list(discover_results["results"])[:limit]
+    results = getattr(discover_results, "results", [])
 
     return {
+        "page": page,
         "results": [
             {
                 "id": m["id"],
@@ -58,15 +59,16 @@ def get_movies_by_genre(genre_id, limit=20):
     }
 
 # Get Shows by Genre ID
-def get_shows_by_genre(genre_id, limit=20):
+def get_shows_by_genre(genre_id, page: int = 1):
     discover_results = discover.discover_tv_shows({
         "with_genres": genre_id,
         "sort_by": "popularity.desc"
     })
     
-    results = list(discover_results["results"])[:limit]
+    results = getattr(discover_results, "results", [])
 
     return {
+        "page": page,
         "results": [
             {
                 "id": s["id"],
@@ -80,25 +82,27 @@ def get_shows_by_genre(genre_id, limit=20):
     }
 
 # Movies by Provider ID
-def get_movies_by_platform(provider_id, limit=10, region="US"):
+def get_movies_by_platform(provider_id, page: int = 1, region="US"):
     filters = {
         "with_watch_providers": provider_id,
         "watch_region": region,
-        "sort_by": "popularity.desc"
+        "sort_by": "popularity.desc",
+        "page": page,
     }
     
     results = discover.discover_movies(filters)
     title_key = "title"
         
-    items = list(results)[:limit]
+    items = getattr(results, "results", [])
     
     return {
+        "page": page,
         "results": [
             {
                 "id": item["id"],
                 "title": item[title_key],
                 "rating": item["vote_average"],
-                "year": m.release_date[:4] if m.release_date else None, # Added year
+                "year": item.release_date[:4] if item.release_date else None, # Added year
                 "poster": base_image_url + item["poster_path"] if item["poster_path"] else None,
             }
             for item in items
@@ -106,25 +110,27 @@ def get_movies_by_platform(provider_id, limit=10, region="US"):
     }
 
 # Shows by Provider ID
-def get_shows_by_platform(provider_id, limit=10, region="US"):
+def get_shows_by_platform(provider_id, page: int = 1, region="US"):
     filters = {
         "with_watch_providers": provider_id,
         "watch_region": region,
-        "sort_by": "popularity.desc"
+        "sort_by": "popularity.desc",
+        "page": page,
     }
     
     results = discover.discover_tv_shows(filters)
     title_key = "name"
         
-    items = list(results)[:limit]
+    items = getattr(results, "results", [])
     
     return {
+        "page": page,
         "results": [
             {
                 "id": item["id"],
                 "title": item[title_key],
                 "rating": item["vote_average"],
-                "year": s.first_air_date[:4] if s.first_air_date else None, # Added year
+                "year": item.first_air_date[:4] if item.first_air_date else None, # Added year
                 "poster": base_image_url + item["poster_path"] if item["poster_path"] else None,
             }
             for item in items

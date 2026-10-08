@@ -4,6 +4,7 @@ from typing import List, Optional
 from app.auth.security import get_current_user
 from app.database import get_session
 from app.models import User, DiaryEntryCreate, DiaryEntry, DiaryEntryPublic, DiaryEntryUpdate, Watched
+from app.service import remove_item_from_watchlist, add_item_to_watched
 
 DiaryEntryRoutes = APIRouter()
 
@@ -25,8 +26,8 @@ def create_diary_entry(
     db: Session = Depends(get_session)
 ):
     """
-    Log a new watch event to the user's diary and automatically 
-    ensure it is recorded in their Watched history.
+    Log a new watch event to the user's diary, ensure it is recorded 
+    in their Watched history, and remove it from their watchlist.
     """
     validate_media_type(entry_in.media_type)
 
@@ -42,52 +43,42 @@ def create_diary_entry(
     if has_watched_before:
         entry_data["is_rewatch"] = True
 
-    db_entry = DiaryEntry(
-        **entry_data,
-        user_id=current_user.id
-    )
+    db_entry = DiaryEntry(**entry_data, user_id=current_user.id)
     db.add(db_entry)
 
-    watched_query = select(Watched).where(
-        Watched.user_id == current_user.id,
-        Watched.tmdb_id == entry_in.tmdb_id,
-        Watched.media_type == entry_in.media_type
-    )
-    watched_record = db.exec(watched_query).first()
+    # Ensure it exists in Watched history using the helper function
+    add_item_to_watched(db, current_user.id, entry_in.tmdb_id, entry_in.media_type)
 
-    if not watched_record:
-        db_watched = Watched(
-            user_id=current_user.id,
-            tmdb_id=entry_in.tmdb_id,
-            media_type=entry_in.media_type
-        )
-        db.add(db_watched)
+    # Remove from watchlist
+    remove_item_from_watchlist(db, current_user.id, entry_in.tmdb_id, entry_in.media_type)
 
     db.commit()
     db.refresh(db_entry)
     return db_entry
 
 @DiaryEntryRoutes.get("/", response_model=List[DiaryEntryPublic], status_code=status.HTTP_200_OK)
-def get_diary_entries(
-    tmdb_id: Optional[int] = Query(None, description="Filter by specific TMDB ID"),
+def get_diary_entries(tmdb_id: Optional[int] = Query( None, description="Filter by specific TMDB ID"),
     media_type: Optional[str] = Query(None, description="Filter by 'movie' or 'tv'"),
+    limit: int = Query( 0, ge=1, le=100, description="Number of entries to return"),
+    offset: int = Query(0, ge=0, description="Number of entries to skip"),
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_session)
 ):
     """
-    Retrieve the logged-in user's diary history, sorted newest watch date first.
+    Retrieve the logged-in user's diary history,
+    sorted newest watch date first.
     """
+
     statement = select(DiaryEntry).where(DiaryEntry.user_id == current_user.id)
-    
-    # Optional filters if user wants to see history for a specific movie/show
+
     if tmdb_id is not None:
         statement = statement.where(DiaryEntry.tmdb_id == tmdb_id)
+
     if media_type is not None:
         statement = statement.where(DiaryEntry.media_type == media_type)
-        
-    # Sort by watch date descending (most recent diary entries first)
+
     statement = statement.order_by(DiaryEntry.watch_date.desc(), DiaryEntry.created_at.desc())
-    
+    statement = statement.offset(offset).limit(limit)
     entries = db.exec(statement).all()
     return entries
 
@@ -163,6 +154,8 @@ def delete_diary_entry(
 def get_diary_entries_by_media_query(
     tmdb_id: int = Query(..., description="The TMDB ID of the movie or TV show"),
     media_type: str = Query(..., description="Either 'movie' or 'tv'"),
+    limit: int = Query(20, ge=1, le=100, description="Number of entries to return"),
+    offset: int = Query(0, ge=0, description="Number of entries to skip"),
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_session)
 ):
@@ -177,5 +170,6 @@ def get_diary_entries_by_media_query(
         DiaryEntry.media_type == media_type
     ).order_by(DiaryEntry.watch_date.desc(), DiaryEntry.created_at.desc())
 
+    statement = statement.offset(offset).limit(limit)
     entries = db.exec(statement).all()
     return entries

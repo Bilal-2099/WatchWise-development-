@@ -10,12 +10,13 @@ movie = Movie()
 show_api = TV()
 
 # Get trending movies
-def get_trending_movie(limit=10):
-    trending_movies = trending.movie_week()
+def get_trending_movie(page: int = 1):
+    trending_movies = trending.movie_week(page=page)
 
-    movies = list(trending_movies["results"])[:limit]
+    movies = getattr(trending_movies, "results", [])
 
     return {
+        "page" : page,
         "results": [
         {
             "id": m["id"],
@@ -29,12 +30,13 @@ def get_trending_movie(limit=10):
     }
 
 # Get trending shows
-def get_trending_show(limit=10):
-    trending_shows = trending.tv_week()
+def get_trending_show(page: int = 1):
+    trending_shows = trending.tv_week(page=page)
 
-    shows = list(trending_shows["results"])[:limit]
+    shows = getattr(trending_shows, "results", [])
 
     return {
+        "page": page,
         "results": [
         {
             "id": s["id"],
@@ -48,12 +50,13 @@ def get_trending_show(limit=10):
     }
 
 # Get popular movies
-def popular_movies(limit=10):
-    popular_movies = movie.popular()
+def popular_movies(page: int = 1):
+    popular_movies = movie.popular(page=page)
 
-    popular_movies = list(popular_movies["results"])[:limit]
+    popular_movies = getattr(popular_movies, "results", [])
 
     return {
+        "page": page,
         "results": [
         {
             "id": m["id"],
@@ -67,12 +70,13 @@ def popular_movies(limit=10):
     }
 
 # Get popular shows
-def popular_shows(limit=10):
-    popular_shows = show_api.popular()
+def popular_shows(page: int = 1):
+    popular_shows = show_api.popular(page=page)
 
-    popular_shows = list(popular_shows["results"])[:limit]
+    popular_shows = getattr(popular_shows, "results", [])
 
     return {
+        "page": page,
         "results": [
         {
             "id": s["id"],
@@ -86,12 +90,13 @@ def popular_shows(limit=10):
     }
 
 # Get top rated movies
-def top_rated_movies(limit=10):
-    top_rated_movies = movie.top_rated()
+def top_rated_movies(page: int = 1):
+    top_rated_movies = movie.top_rated(page=page)
 
-    top_rated_movies = list(top_rated_movies["results"])[:limit]
+    top_rated_movies = getattr(top_rated_movies, "results", [])
 
     return {
+        "page": page,
         "results": [
         {
             "id": m["id"],
@@ -105,12 +110,13 @@ def top_rated_movies(limit=10):
     }
 
 # Get top rated shows
-def top_rated_shows(limit=10):
-    top_rated_shows = show_api.top_rated()
+def top_rated_shows(page: int = 1):
+    top_rated_shows = show_api.top_rated(page=page)
 
-    top_rated_shows = list(top_rated_shows["results"])[:limit]
+    top_rated_shows = getattr(top_rated_shows, "results", [])
 
     return {
+        "page": page,
         "results": [
         {
             "id": s["id"],
