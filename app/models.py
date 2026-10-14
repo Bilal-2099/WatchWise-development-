@@ -10,7 +10,7 @@ class User(SQLModel, table=True):
     username: str = Field(index=True, unique=True) # Should be unique
     email: str = Field(index=True, unique=True) # Should be unique
     hashed_password: str
-    profile_photo: Optional[str] = Field(default=None) # It is optional cause I am still thinking about it
+    profile_photo: Optional[str] = Field(default=None)
     created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc)) # Just to when user is added
 
 class UserPublic(BaseModel):
