@@ -92,13 +92,6 @@ class ListItem(SQLModel, table=True):
     media_type: str # "movie" or "tv"
     added_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
 
-class Watched(SQLModel, table=True):
-    id: Optional[int] = Field(default=None, primary_key=True)
-    user_id: int = Field(foreign_key="user.id", index=True)
-    tmdb_id: int
-    media_type: str # "movie" or "tv"
-    watched_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
-
 class CustomListCreate(SQLModel):
     title: str
     description: Optional[str] = None
@@ -122,6 +115,13 @@ class ListItemPublic(ListItemCreate):
     list_id: int
     added_at: datetime
 
+class Watched(SQLModel, table=True):
+    id: Optional[int] = Field(default=None, primary_key=True)
+    user_id: int = Field(foreign_key="user.id", index=True)
+    tmdb_id: int
+    media_type: str # "movie" or "tv"
+    watched_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+    
 # Watched Schemas
 class WatchedCreate(SQLModel):
     tmdb_id: int
